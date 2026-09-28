@@ -1,0 +1,46 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pyinstaller
+
+      - name: Build EXE
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name SkinLandCharmScanner main.py
+
+      - name: Copy config files
+        shell: pwsh
+        run: |
+          Copy-Item charms.json dist\charms.json
+          @'
+          {
+            "api_key": "",
+            "interval": 300,
+            "max_price": 10000
+          }
+          '@ | Out-File -Encoding utf8 dist\config.json
+
+      - name: Package
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist\SkinLandCharmScanner.exe,dist\charms.json,dist\config.json -DestinationPath SkinLandCharmScanner-Windows.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SkinLandCharmScanner-Windows
+          path: SkinLandCharmScanner-Windows.zip
