@@ -20,27 +20,21 @@ jobs:
         run: pip install -r requirements.txt pyinstaller
 
       - name: Build EXE
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name SkinLandCharmScanner main.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name SkinLandCharmScanner-V2 main.py
 
       - name: Copy config files
         shell: pwsh
         run: |
           Copy-Item charms.json dist\charms.json
-          @'
-          {
-            "api_key": "",
-            "interval": 300,
-            "max_price": 10000
-          }
-          '@ | Out-File -Encoding utf8 dist\config.json
+          Copy-Item config.json dist\config.json
 
       - name: Package
         shell: pwsh
         run: |
-          Compress-Archive -Path dist\SkinLandCharmScanner.exe,dist\charms.json,dist\config.json -DestinationPath SkinLandCharmScanner-Windows.zip
+          Compress-Archive -Path dist\SkinLandCharmScanner-V2.exe,dist\charms.json,dist\config.json -DestinationPath SkinLandCharmScanner-V2-Windows.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SkinLandCharmScanner-Windows
-          path: SkinLandCharmScanner-Windows.zip
+          name: SkinLandCharmScanner-V2-Windows
+          path: SkinLandCharmScanner-V2-Windows.zip
