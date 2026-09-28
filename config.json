@@ -1,0 +1,7 @@
+{
+  "max_price": 100,
+  "pages": 1,
+  "interval": 300,
+  "request_delay": 0.45,
+  "timeout": 20
+}
